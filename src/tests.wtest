@@ -1,0 +1,40 @@
+import universidades.*
+import empresas.*
+import profesionales.*
+describe "universidades"{
+	var sanMartin = new Universidad(provincia = "Buenos Aires", honorarios = 3500)
+	var rosario = new Universidad(provincia = "Santa Fe", honorarios = 2800)
+	var corrientes = new Universidad(provincia = "Corrientes", honorarios = 4200)
+	var hurlingham = new Universidad(provincia = "Buenos Aires", honorarios = 8800)
+	
+	var juana = new ProfesionalVinculado(universidad = rosario)
+	var melina = new ProfesionalAsociado(universidad = corrientes)
+	var rocio = new ProfesionalLibre(honorariosPorHora = 5500)
+	var luciana = new ProfesionalLibre(honorariosPorHora = 3200)
+	
+	var rosellaInc = new Empresa(honorarioReferencia = 3500)
+	
+	fixture {
+		rocio.universidad(hurlingham)
+		//rocio.provinciasDondePuedeTrabajar("Santa Fe")
+		//rocio.provinciasDondePuedeTrabajar("Cordoba")
+		//rocio.provinciasDondePuedeTrabajar("Buenos Aires")
+		rocio.provinciasDondePuedeTrabajar(#{"Santa Fe", "Cordoba", "Buenos Aires"})
+		luciana.universidad(rosario)
+		luciana.provinciasDondePuedeTrabajar("Santa Fe")
+		luciana.provinciasDondePuedeTrabajar("Entre Rios")
+		rosellaInc.contratar(rocio)
+		rosellaInc.contratar(luciana)
+		rosellaInc.contratar(juana)
+		rosellaInc.contratar(melina)
+		}
+		
+test "test"{
+	assert.equals(2, rosellaInc.cuantosEstudiaronEn(rosario))
+	assert.equals(1, rosellaInc.cuantosEstudiaronEn(hurlingham))
+	assert.equals(0, rosellaInc.cuantosEstudiaronEn(sanMartin))
+	assert.equals(#{rocio}, rosellaInc.profesionalesCaros())
+	assert.equals(#{rosario,corrientes,hurlingham}, rosellaInc.universidadesFormadoras())
+	assert.equals(juana, rosellaInc.elProfesionalMasBarato())
+	assert.that(rosellaInc.esAcotado())	
+}}
